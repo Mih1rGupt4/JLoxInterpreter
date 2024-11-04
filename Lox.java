@@ -1,4 +1,4 @@
-package jloxinterpreter.lox;
+package jloxinterpreter;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -8,9 +8,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
-public class Lox {
+import jloxinterpreter.lox.*;
 
-  static boolean hadError = false;
+public class Lox {
 
   public static void main(String[] args) throws IOException {
     if (args.length > 1) {
@@ -28,7 +28,7 @@ public class Lox {
     run(new String(bytes, Charset.defaultCharset()));
 
     // Indicate an error in the exit code.
-    if (hadError)
+    if (ErrorHandler.hadError)
       System.exit(65);
   }
 
@@ -42,7 +42,7 @@ public class Lox {
       if (line == null)
         break;
       run(line);
-      hadError = false;
+      ErrorHandler.hadError = false;
     }
   }
 
@@ -54,16 +54,5 @@ public class Lox {
     for (Token token : tokens) {
       System.out.println(token);
     }
-  }
-
-  static void error(int line, String message) {
-    report(line, "", message);
-  }
-
-  private static void report(int line, String where,
-      String message) {
-    System.err.println(
-        "[line " + line + "] Error" + where + ": " + message);
-    hadError = true;
   }
 }
