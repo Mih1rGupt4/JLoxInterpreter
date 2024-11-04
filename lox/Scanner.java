@@ -7,7 +7,7 @@ import java.util.Map;
 
 import static jloxinterpreter.lox.TokenType.*;
 
-class Scanner {
+public class Scanner {
     private final String source;
     private final List<Token> tokens = new ArrayList<>();
     private int start = 0;
@@ -37,11 +37,11 @@ class Scanner {
         keywords.put("while",  WHILE);
     }
 
-    Scanner(String source) {
+    public Scanner(String source) {
         this.source = source;
     }
 
-    List<Token> scanTokens() {
+    public List<Token> scanTokens() {
         while (!isAtEnd()) {
             // We are at the beginning of the next lexeme.
             start = current;
@@ -75,8 +75,14 @@ class Scanner {
                 break;
             case '/':
                 if (match('/')) {
-                  // A comment goes until the end of the line.
-                  while (peek() != '\n' && !isAtEnd()) advance(); // ignore all chars in the entire comment
+                  // Ignore single line comment 
+                  while (peek() != '\n' && !isAtEnd()) advance();
+                } else if(match('*')) {
+                    // Ignore multiline comment
+                    while(!isAtEnd()) {
+                        if(peek() == '\n') line++;
+                        if(advance() == '*' && match('/')) break;
+                    }  
                 } else {
                   addToken(SLASH);
                 }
@@ -99,7 +105,7 @@ class Scanner {
                 } else if(isAlpha(c)) {
                     identifier();
                 } else {
-                    Lox.error(line, "Unexpected character.");
+                    ErrorHandler.error(line, "Unexpected character.");
                 }
                 break;
         }
@@ -140,7 +146,7 @@ class Scanner {
         }
     
         if (isAtEnd()) {
-            Lox.error(line, "Unterminated string.");
+            ErrorHandler.error(line, "Unterminated string.");
             return;
         }
     
@@ -152,7 +158,7 @@ class Scanner {
         addToken(STRING, value);
     }
 
-    // check if current char continues with = 
+    // check if current char continues with example '=' 
     // In Lox (for 2 char operator)
     private boolean match(char expected) { // 
         if (isAtEnd()) 
