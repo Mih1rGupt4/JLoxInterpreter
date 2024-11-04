@@ -1,0 +1,3 @@
+cd ~/Desktop/Lox/jloxinterpreter
+javac -d . Lox.java lox/*.java
+java jloxinterpreter.Lox myCode.txt
